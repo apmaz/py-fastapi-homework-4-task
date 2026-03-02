@@ -60,7 +60,7 @@ async def create_user_profile(
     token: str = Depends(get_token),
     jwt_manager: JWTAuthManagerInterface = Depends(get_jwt_auth_manager),
     s3_storage_client: S3StorageInterface = Depends(get_s3_storage_client),
-    user_data: str = Depends(check_field),
+    user_data: tuple = Depends(check_field),
 ):
 
     first_name, last_name, date_of_birth, gender, info, avatar = user_data

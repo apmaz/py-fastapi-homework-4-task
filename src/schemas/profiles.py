@@ -13,3 +13,5 @@ class ProfileResponseSchema(BaseModel):
     date_of_birth: date
     info: str
     avatar: str
+
+    model_config = {"from_attributes": True}

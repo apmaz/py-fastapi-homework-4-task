@@ -1,6 +1,5 @@
 from datetime import datetime, timezone
 from typing import cast
-from urllib import request
 
 from fastapi import APIRouter, Depends, status, HTTPException, BackgroundTasks
 from sqlalchemy import select, delete
@@ -136,7 +135,7 @@ async def register_user(
             detail="An error occurred during user creation.",
         ) from e
     else:
-        activation_link = f"{BASE_URL}/register/"
+        activation_link = f"{BASE_URL}/activate/"
         background_tasks.add_task(
             func=email_sender.send_activation_email,
             email=user_data.email,
@@ -235,7 +234,7 @@ async def activate_account(
     await db.delete(token_record)
     await db.commit()
 
-    login_link = f"{BASE_URL}/activate/"
+    login_link = f"{BASE_URL}/login/"
     background_tasks.add_task(
         func=email_sender.send_activation_complete_email,
         email=activation_data.email,
@@ -293,7 +292,7 @@ async def request_password_reset_token(
     db.add(reset_token)
     await db.commit()
 
-    reset_link = f"{BASE_URL}/password-reset/request/"
+    reset_link = f"{BASE_URL}/reset-password/complete/"
     background_tasks.add_task(
         func=email_sender.send_password_reset_email,
         email=data.email,
@@ -408,7 +407,7 @@ async def reset_password(
             detail="An error occurred while resetting the password.",
         )
 
-    login_link = f"{BASE_URL}/reset-password/complete/"
+    login_link = f"{BASE_URL}/login/"
     background_tasks.add_task(
         func=email_sender.send_password_reset_complete_email,
         email=data.email,

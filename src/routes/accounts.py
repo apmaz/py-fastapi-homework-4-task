@@ -42,7 +42,7 @@ from security.interfaces import JWTAuthManagerInterface
 router = APIRouter()
 
 
-BASE_URL = "http://localhost:8000/api/v1/accounts"
+BASE_URL = "http://127.0.0.1"
 
 
 @router.post(

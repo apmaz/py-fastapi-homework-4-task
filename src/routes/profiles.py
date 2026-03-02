@@ -112,16 +112,18 @@ async def create_user_profile(
             )
 
         target_user_id = int(user_id)
-        filename = f"avatars/{target_user_id}_avatar.{avatar.filename.split('.')[-1]}"
+        avatar_key = f"avatars/{target_user_id}_avatar.{avatar.filename.split('.')[-1]}"
         contents = await avatar.read()
 
         try:
-            await s3_storage_client.upload_file(file_name=filename, file_data=contents)
+            await s3_storage_client.upload_file(file_name=avatar_key, file_data=contents)
         except S3FileUploadError:
             raise HTTPException(
                 status_code=500,
                 detail="Failed to upload avatar. Please try again later."
             )
+
+        avatar_url = await s3_storage_client.get_file_url(avatar_key)
 
         try:
             user_profile = UserProfileModel(
@@ -130,7 +132,7 @@ async def create_user_profile(
                 gender=gender,
                 date_of_birth=date_of_birth,
                 info=info,
-                avatar=filename,
+                avatar=avatar_url,
                 user=target_user,
             )
             db.add(user_profile)
